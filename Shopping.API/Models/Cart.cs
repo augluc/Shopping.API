@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Shopping.API.Models
 {
-    public class ShoppingCart
+    public class Cart
     {
         public int CartId { get; set; }
         public string PayerDocument { get; set; } = string.Empty;
@@ -16,7 +16,7 @@ namespace Shopping.API.Models
         }
         public decimal? Ammount => Products?.Sum(p => p.Price * p.Quantity) ?? 0;
 
-        public ShoppingCart(int cartId, string payerDocument, DateTime? createdAt = null)
+        public Cart(int cartId, string payerDocument, DateTime? createdAt = null)
         {
             CartId = cartId;
             PayerDocument = payerDocument;

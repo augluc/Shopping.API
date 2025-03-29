@@ -20,7 +20,7 @@ namespace Shopping.API.Controllers
         }
 
         [HttpGet("{id}", Name = "GetCartById")]
-        [ProducesResponseType(typeof(ShoppingCart), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(Cart), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -49,10 +49,10 @@ namespace Shopping.API.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(ShoppingCart), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(Cart), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> CreateCart([FromBody] ShoppingCartRequest request)
+        public async Task<IActionResult> CreateCart([FromBody] CartRequest request)
         {
             try
             {

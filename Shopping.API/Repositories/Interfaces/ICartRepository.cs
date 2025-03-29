@@ -6,8 +6,8 @@ namespace Shopping.API.Repositories.Interfaces
 {
     public interface ICartRepository
     {
-        Task<ShoppingCart?> GetByIdAsync(int cartId);
-        Task<ShoppingCart> CreateAsync(ShoppingCartRequest shoppingCartRequest);
+        Task<Cart?> GetByIdAsync(int cartId);
+        Task<Cart> CreateAsync(CartRequest cartRequest);
         Task<bool> DeleteAsync(int cartId);
         Task<Product?> GetProductByIdAsync(int productId);
         Task AddProductAsync(Product product);

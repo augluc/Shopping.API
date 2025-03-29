@@ -22,7 +22,7 @@ namespace Shopping.API.Services
             _logger = logger;
         }
 
-        public async Task<ShoppingCart?> GetCartByIdAsync(int id)
+        public async Task<Cart?> GetCartByIdAsync(int id)
         {
             if (id <= 0)
                 throw new ArgumentException("Invalid cart ID.");
@@ -30,12 +30,12 @@ namespace Shopping.API.Services
             return await _cartRepository.GetByIdAsync(id);
         }
 
-        public async Task<ShoppingCart> CreateCartAsync(ShoppingCartRequest shoppingCartRequest)
+        public async Task<Cart> CreateCartAsync(CartRequest cartRequest)
         {
-            if (shoppingCartRequest == null || string.IsNullOrWhiteSpace(shoppingCartRequest.PayerDocument))
-                throw new ArgumentException("ShoppingCartRequest cannot be null and PayerDocument is required.");
+            if (cartRequest == null || string.IsNullOrWhiteSpace(cartRequest.PayerDocument))
+                throw new ArgumentException("cartRequest cannot be null and PayerDocument is required.");
 
-            return await _cartRepository.CreateAsync(shoppingCartRequest);
+            return await _cartRepository.CreateAsync(cartRequest);
         }
 
         public async Task<bool> DeleteCartAsync(int id)

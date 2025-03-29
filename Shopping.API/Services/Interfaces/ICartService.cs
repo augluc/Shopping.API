@@ -5,8 +5,8 @@ namespace Shopping.API.Services.Interfaces
 {
     public interface ICartService
     {
-        Task<ShoppingCart?> GetCartByIdAsync(int id);
-        Task<ShoppingCart> CreateCartAsync(ShoppingCartRequest shoppingCartRequest);
+        Task<Cart?> GetCartByIdAsync(int id);
+        Task<Cart> CreateCartAsync(CartRequest shoppingCartRequest);
         Task<bool> DeleteCartAsync(int id);
         Task<Product?> GetProductByIdAsync(int id);
         Task<Product> AddProductToCartAsync(int cartId, Product product);

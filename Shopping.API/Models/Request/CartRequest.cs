@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Shopping.API.Models.Request
 {
-    public record ShoppingCartRequest
+    public record CartRequest
     {
         [Required(ErrorMessage = "The PayerDocument is required.")]
         [StringLength(11, MinimumLength = 11, ErrorMessage = "The PayerDocument must be exactly 11 digits.")]
@@ -12,7 +12,7 @@ namespace Shopping.API.Models.Request
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public ShoppingCartRequest(string payerDocument)
+        public CartRequest(string payerDocument)
         {
             PayerDocument = payerDocument;
             CreatedAt = DateTime.UtcNow;

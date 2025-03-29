@@ -21,12 +21,12 @@ namespace Shopping.API.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<ShoppingCart?> GetByIdAsync(int cartId)
+        public async Task<Cart?> GetByIdAsync(int cartId)
         {
             using var connection = _dbContext.CreateConnection();
 
-            var cart = await connection.QueryFirstOrDefaultAsync<ShoppingCart>(
-                "SELECT * FROM ShoppingCart WHERE CartId = @CartId",
+            var cart = await connection.QueryFirstOrDefaultAsync<Cart>(
+                "SELECT * FROM Cart WHERE CartId = @CartId",
                 new { CartId = cartId });
 
             if (cart == null)
@@ -40,7 +40,7 @@ namespace Shopping.API.Repositories
             return cart;
         }
 
-        public async Task<ShoppingCart> CreateAsync(ShoppingCartRequest shoppingCartRequest)
+        public async Task<Cart> CreateAsync(CartRequest cartRequest)
         {
             using var connection = _dbContext.CreateConnection();
             connection.Open();
@@ -49,15 +49,15 @@ namespace Shopping.API.Repositories
             try
             {
                 var id = await connection.QuerySingleAsync<int>(
-                    @"INSERT INTO ShoppingCart (PayerDocument, CreatedAt) 
+                    @"INSERT INTO Cart (PayerDocument, CreatedAt) 
                       VALUES (@PayerDocument, @CreatedAt);
                       SELECT CAST(SCOPE_IDENTITY() AS INT);",
-                    new { shoppingCartRequest.PayerDocument, shoppingCartRequest.CreatedAt },
+                    new { cartRequest.PayerDocument, cartRequest.CreatedAt },
                     transaction);
 
                 transaction.Commit();
 
-                return new ShoppingCart(id, shoppingCartRequest.PayerDocument, shoppingCartRequest.CreatedAt);
+                return new Cart(id, cartRequest.PayerDocument, cartRequest.CreatedAt);
             }
             catch
             {
@@ -80,7 +80,7 @@ namespace Shopping.API.Repositories
                     transaction);
 
                 var affectedRows = await connection.ExecuteAsync(
-                    "DELETE FROM ShoppingCart WHERE CartId = @CartId",
+                    "DELETE FROM Cart WHERE CartId = @CartId",
                     new { CartId = cartId },
                     transaction);
 
