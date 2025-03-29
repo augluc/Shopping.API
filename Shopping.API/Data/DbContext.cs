@@ -15,7 +15,7 @@ namespace Shopping.API.Data
 
         public IDbConnection CreateConnection()
         {
-            var connectionString = _configuration.GetConnectionString("SqlConnection");
+            var connectionString = _configuration.GetConnectionString("DefaultConnection");
             if (string.IsNullOrEmpty(connectionString))
             {
                 throw new InvalidOperationException("The connection string isn't configurated.");
