@@ -49,7 +49,7 @@ namespace Shopping.API.Services
             var paymentRequest = new PaymentRequest
             {
                 CartId = cartId,
-                Amount = cart.Ammount,
+                Amount = cart.Amount,
                 PayerDocument = cart.PayerDocument
             };
 

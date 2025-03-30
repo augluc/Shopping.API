@@ -57,7 +57,29 @@ namespace Shopping.API.Repositories
 
                 transaction.Commit();
 
-                return new Cart(id, cartRequest.PayerDocument, cartRequest.CreatedAt);
+                return new Cart(id, cartRequest.PayerDocument, 0, cartRequest.CreatedAt);
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
+            }
+        }
+
+        public async Task<bool> UpdateCartDiscountPercentage(Cart cart)
+        {
+            using var connection = _dbContext.CreateConnection();
+            connection.Open();
+            using var transaction = connection.BeginTransaction();
+            try
+            {
+                var affectedRows = await connection.ExecuteAsync(
+                    "UPDATE Cart SET DiscountPercentage = @DiscountPercentage WHERE CartId = @CartId",
+                    new { DiscountPercentage = cart.DiscountPercentage, CartId = cart.CartId },
+                    transaction);
+                transaction.Commit();
+
+                return affectedRows > 0;
             }
             catch
             {

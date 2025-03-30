@@ -13,5 +13,6 @@ namespace Shopping.API.Services.Interfaces
         Task<Product> AddProductToCartAsync(int cartId, Product product);
         Task<bool> UpdateProductInCartAsync(int productId, Product product);
         Task<bool> RemoveProductFromCartAsync(int productId);
+        Task<bool> ApplyDiscountAsync(int cartId, decimal discountPercentage);
     }
 }

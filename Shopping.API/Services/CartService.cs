@@ -11,7 +11,6 @@ namespace Shopping.API.Services
         private readonly ICacheService _cacheService;
         private readonly ILogger<CartService> _logger;
 
-
         public CartService(
             ICartRepository cartRepository,
             ICacheService cacheService,
@@ -32,9 +31,9 @@ namespace Shopping.API.Services
             if (cart == null)
                 return null;    
 
-            if (cart.Ammount <= 0)
+            if (cart.Amount <= 0)
             {
-                cart.Ammount = await GetCartTotalAsync(id);
+                cart.Amount = await GetCartTotalAsync(id);
             }
 
             return cart;
@@ -83,7 +82,7 @@ namespace Shopping.API.Services
                 throw new KeyNotFoundException($"Cart with ID {cartId} not found");
             }
 
-            var total = cart.Products.Sum(p => p.Price * p.Quantity);
+            var total = cart.Products.Sum(p => p.Price * p.Quantity) * (1 - (cart.DiscountPercentage/100));
 
             await _cacheService.CacheCartTotalAsync(cartId, total);
             _logger.LogInformation("Calculated and cached cart {CartId} total", cartId);
@@ -130,6 +129,19 @@ namespace Shopping.API.Services
 
             await _cacheService.InvalidateCartTotalCacheAsync(existingProduct.CartId);
             return await _cartRepository.RemoveProductAsync(productId);
+        }
+
+        public async Task<bool> ApplyDiscountAsync(int cartId, decimal discountPercentage)
+        {
+            if(discountPercentage < 0 || discountPercentage > 50)
+                throw new ArgumentException("Discount percentage must be between 0 and 50.");
+            var cart = await _cartRepository.GetByIdAsync(cartId);
+            if (cart == null) throw new ArgumentException($"Cart with ID {cartId} not found");
+
+            cart.DiscountPercentage = discountPercentage;
+            await _cacheService.InvalidateCartTotalCacheAsync(cartId);
+
+            return await _cartRepository.UpdateCartDiscountPercentage(cart);
         }
     }
 }

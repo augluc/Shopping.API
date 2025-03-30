@@ -14,13 +14,15 @@ namespace Shopping.API.Models
             get => _products;
             set => _products = value ?? new List<Product>();
         }
-        public decimal Ammount { get; set; }
-        public Cart(int cartId, string payerDocument, DateTime? createdAt = null)
+        public decimal Amount { get; set; }
+        public decimal DiscountPercentage { get; set; }
+        public Cart(int cartId, string payerDocument, decimal? discountPercentage, DateTime? createdAt = null)
         {
             CartId = cartId;
             PayerDocument = payerDocument;
             CreatedAt = createdAt ?? DateTime.UtcNow;
-            Ammount = 0;
+            Amount = 0;
+            DiscountPercentage = discountPercentage ?? 0;
         }
     }
 }

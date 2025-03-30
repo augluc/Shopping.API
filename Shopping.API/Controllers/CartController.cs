@@ -19,31 +19,31 @@ namespace Shopping.API.Controllers
             _logger = logger;
         }
 
-        [HttpGet("{id}", Name = "GetCartById")]
+        [HttpGet("{cartId}", Name = "GetCartById")]
         [ProducesResponseType(typeof(Cart), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetCart(int id)
+        public async Task<IActionResult> GetCart(int cartId)
         {
             try
             {
-                var cart = await _cartService.GetCartByIdAsync(id);
+                var cart = await _cartService.GetCartByIdAsync(cartId);
                 return Ok(cart);
             }
             catch (KeyNotFoundException ex)
             {
-                _logger.LogWarning(ex, "Cart not found - ID: {CartId}", id);
+                _logger.LogWarning(ex, "Cart not found - ID: {CartId}", cartId);
                 return NotFound(ex.Message);
             }
             catch (ArgumentException ex)
             {
-                _logger.LogWarning(ex, "Invalid request - ID: {CartId}", id);
+                _logger.LogWarning(ex, "Invalid request - ID: {CartId}", cartId);
                 return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving cart - ID: {CartId}", id);
+                _logger.LogError(ex, "Error retrieving cart - ID: {CartId}", cartId);
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request");
             }
         }
@@ -57,7 +57,7 @@ namespace Shopping.API.Controllers
             try
             {
                 var cart = await _cartService.CreateCartAsync(request);
-                return CreatedAtRoute("GetCartById", new { id = cart.CartId }, cart);
+                return Created("api/cart", cart);
             }
             catch (ArgumentException ex)
             {
@@ -71,31 +71,31 @@ namespace Shopping.API.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{cartId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteCart(int id)
+        public async Task<IActionResult> DeleteCart(int cartId)
         {
             try
             {
-                await _cartService.DeleteCartAsync(id);
+                await _cartService.DeleteCartAsync(cartId);
                 return NoContent();
             }
             catch (KeyNotFoundException ex)
             {
-                _logger.LogWarning(ex, "Cart not found for deletion - ID: {CartId}", id);
+                _logger.LogWarning(ex, "Cart not found for deletion - ID: {CartId}", cartId);
                 return NotFound(ex.Message);
             }
             catch (ArgumentException ex)
             {
-                _logger.LogWarning(ex, "Invalid cart deletion request - ID: {CartId}", id);
+                _logger.LogWarning(ex, "Invalid cart deletion request - ID: {CartId}", cartId);
                 return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error deleting cart - ID: {CartId}", id);
+                _logger.LogError(ex, "Error deleting cart - ID: {CartId}", cartId);
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while deleting the cart");
             }
         }
@@ -110,7 +110,7 @@ namespace Shopping.API.Controllers
             try
             {
                 var createdProduct = await _cartService.AddProductToCartAsync(cartId, product);
-                return CreatedAtAction(nameof(GetProduct), new { id = createdProduct.ProductId }, createdProduct);
+                return Created($"api/{cartId}/products", createdProduct);
             }
             catch (KeyNotFoundException ex)
             {
@@ -129,31 +129,31 @@ namespace Shopping.API.Controllers
             }
         }
 
-        [HttpGet("products/{id}", Name = "GetProduct")]
+        [HttpGet("products/{productId}", Name = "GetProduct")]
         [ProducesResponseType(typeof(Product), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetProduct(int id)
+        public async Task<IActionResult> GetProduct(int productId)
         {
             try
             {
-                var product = await _cartService.GetProductByIdAsync(id);
+                var product = await _cartService.GetProductByIdAsync(productId);
                 return Ok(product);
             }
             catch (KeyNotFoundException ex)
             {
-                _logger.LogWarning(ex, "Product not found - ID: {ProductId}", id);
+                _logger.LogWarning(ex, "Product not found - ID: {ProductId}", productId);
                 return NotFound(ex.Message);
             }
             catch (ArgumentException ex)
             {
-                _logger.LogWarning(ex, "Invalid product request - ID: {ProductId}", id);
+                _logger.LogWarning(ex, "Invalid product request - ID: {ProductId}", productId);
                 return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error retrieving product - ID: {ProductId}", id);
+                _logger.LogError(ex, "Error retrieving product - ID: {ProductId}", productId);
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the product");
             }
         }
@@ -218,6 +218,40 @@ namespace Shopping.API.Controllers
             {
                 _logger.LogError(ex, "Error removing product - ID: {ProductId}", productId);
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while removing the product");
+            }
+        }
+
+        [HttpPut("{cartId}/discount")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> UpdateProduct(int cartId, decimal discountPercentage)
+        {
+            try
+            {
+                await _cartService.ApplyDiscountAsync(cartId, discountPercentage);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                _logger.LogWarning(ex, "Cart not found for update - ID: {CartId}", cartId);
+                return NotFound(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Invalid cart update request - ID: {CartId}", cartId);
+                return BadRequest(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Cart update conflict - ID: {CartId}", cartId);
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating cart - ID: {CartId}", cartId);
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while updating the cart");
             }
         }
     }
