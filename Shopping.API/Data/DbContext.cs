@@ -1,10 +1,11 @@
 ﻿using System.Data;
 using Microsoft.Data.SqlClient;
+using Shopping.API.Data.Interfaces;
 
 
 namespace Shopping.API.Data
 {
-    public class DbContext
+    public class DbContext : IDbContext
     {
         private readonly IConfiguration _configuration;
 

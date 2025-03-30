@@ -5,6 +5,7 @@ using Shopping.API.Repositories;
 using Shopping.API.Repositories.Interfaces;
 using Shopping.API.Services;
 using Shopping.API.Services.Interfaces;
+using Shopping.API.Data.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<DbContext>();
+builder.Services.AddSingleton<IDbContext, DbContext>();
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = builder.Configuration.GetConnectionString("Redis");

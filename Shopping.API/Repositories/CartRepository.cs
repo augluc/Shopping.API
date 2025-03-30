@@ -1,6 +1,7 @@
 ﻿// CartRepository.cs
 using Dapper;
 using Shopping.API.Data;
+using Shopping.API.Data.Interfaces;
 using Shopping.API.Models;
 using Shopping.API.Models.Request;
 using Shopping.API.Repositories.Interfaces;
@@ -14,9 +15,9 @@ namespace Shopping.API.Repositories
 {
     public class CartRepository : ICartRepository
     {
-        private readonly DbContext _dbContext;
+        private readonly IDbContext _dbContext;
 
-        public CartRepository(DbContext dbContext)
+        public CartRepository(IDbContext dbContext)
         {
             _dbContext = dbContext;
         }

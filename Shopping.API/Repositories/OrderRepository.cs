@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Shopping.API.Data;
+using Shopping.API.Data.Interfaces;
 using Shopping.API.Models;
 using Shopping.API.Repositories.Interfaces;
 using System.Data;
@@ -9,9 +10,9 @@ namespace Shopping.API.Repositories
 {
     public class OrderRepository : IOrderRepository
     {
-        private readonly DbContext _dbContext;
+        private readonly IDbContext _dbContext;
 
-        public OrderRepository(DbContext dbContext)
+        public OrderRepository(IDbContext dbContext)
         {
             _dbContext = dbContext;
         }
