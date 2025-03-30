@@ -29,12 +29,12 @@ namespace Shopping.API.Controllers
             try
             {
                 var cart = await _cartService.GetCartByIdAsync(cartId);
+                if (cart == null)
+                {
+                    _logger.LogWarning("Cart not found - ID: {CartId}", cartId);
+                    return NotFound("Cart not found");
+                }
                 return Ok(cart);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                _logger.LogWarning(ex, "Cart not found - ID: {CartId}", cartId);
-                return NotFound(ex.Message);
             }
             catch (ArgumentException ex)
             {
