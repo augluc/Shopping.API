@@ -31,7 +31,7 @@ builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 builder.Services.AddHttpClient<IPaymentService, PaymentService>(client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["PaymentService:BaseUrl"]);
+    client.BaseAddress = new Uri("https://rendimentopay.free.beeceptor.com");
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 

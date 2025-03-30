@@ -31,44 +31,32 @@ namespace Shopping.API.Services
         public async Task<Order> ProcessPayment(int cartId)
         {
             if (cartId <= 0)
-            {
                 throw new ArgumentException("Invalid cart ID");
-            }
 
             var cart = await _cartService.GetCartByIdAsync(cartId);
+
             if (cart == null || !cart.Products.Any())
-            {
                 throw new ArgumentException("Cart is empty or doesn't exist");
-            }
 
-            var cartTotal = await _cacheService.GetCachedCartTotalAsync(cartId) ??
-                          cart.Products.Sum(p => p.Price * p.Quantity);
+            if (string.IsNullOrWhiteSpace(cart.PayerDocument))
+                throw new ArgumentException("Payer document is required");
 
-            var order = await _orderRepository.GetByCartIdAsync(cartId) ??
-                       await _orderRepository.CreateAsync(cartId);
+            var order = await _orderRepository.GetByCartIdAsync(cartId);
 
-            if (order.PaymentStatus == "INLINE")
-            {
+            if (order != null && order.PaymentStatus == "INLINE")
                 throw new ArgumentException("Payment already processed");
-            }
 
             var paymentRequest = new PaymentRequest
             {
                 CartId = cartId,
-                Amount = cartTotal,
+                Amount = cart.Ammount,
                 PayerDocument = cart.PayerDocument
             };
 
-            if (string.IsNullOrWhiteSpace(paymentRequest.PayerDocument))
-            {
-                throw new ArgumentException("Payer document is required");
-            }
-
-            PaymentResponse paymentResponse;
             try
             {
                 var response = await _httpClient.PostAsJsonAsync(
-                    "/payments",
+                    "payments",
                     new
                     {
                         cart_id = paymentRequest.CartId,
@@ -77,19 +65,26 @@ namespace Shopping.API.Services
                     });
 
                 response.EnsureSuccessStatusCode();
-                paymentResponse = await response.Content.ReadFromJsonAsync<PaymentResponse>() ??
+
+                var paymentResponse = await response.Content.ReadFromJsonAsync<PaymentResponse>() ??
                     throw new InvalidOperationException("Invalid payment response");
+
+                return await _orderRepository.CreateAsync(
+                    cartId,
+                    paymentResponse.PaymentId,
+                    paymentResponse.Status,
+                    paymentResponse.CreatedAt);
             }
             catch (HttpRequestException ex)
             {
                 _logger.LogError(ex, "Payment API error for cart {CartId}", cartId);
                 throw new ApplicationException("Payment service unavailable", ex);
             }
-
-            return await _orderRepository.UpdatePaymentStatusAsync(
-                order.OrderId,
-                paymentResponse.PaymentId,
-                paymentResponse.Status);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error processing payment for cart {CartId}", cartId);
+                throw;
+            }
         }
     }
 }

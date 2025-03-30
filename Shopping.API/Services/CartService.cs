@@ -27,7 +27,17 @@ namespace Shopping.API.Services
             if (id <= 0)
                 throw new ArgumentException("Invalid cart ID.");
 
-            return await _cartRepository.GetByIdAsync(id);
+            var cart = await _cartRepository.GetByIdAsync(id);
+
+            if (cart == null)
+                return null;    
+
+            if (cart.Ammount <= 0)
+            {
+                cart.Ammount = await GetCartTotalAsync(id);
+            }
+
+            return cart;
         }
 
         public async Task<Cart> CreateCartAsync(CartRequest cartRequest)
@@ -60,7 +70,6 @@ namespace Shopping.API.Services
 
         public async Task<decimal> GetCartTotalAsync(int cartId)
         {
-            // Try to get from cache first
             var cachedTotal = await _cacheService.GetCachedCartTotalAsync(cartId);
             if (cachedTotal.HasValue)
             {
@@ -68,7 +77,6 @@ namespace Shopping.API.Services
                 return cachedTotal.Value;
             }
 
-            // Calculate from database if not in cache
             var cart = await _cartRepository.GetByIdAsync(cartId);
             if (cart == null)
             {
@@ -77,7 +85,6 @@ namespace Shopping.API.Services
 
             var total = cart.Products.Sum(p => p.Price * p.Quantity);
 
-            // Store in cache
             await _cacheService.CacheCartTotalAsync(cartId, total);
             _logger.LogInformation("Calculated and cached cart {CartId} total", cartId);
 

@@ -14,13 +14,13 @@ namespace Shopping.API.Models
             get => _products;
             set => _products = value ?? new List<Product>();
         }
-        public decimal? Ammount => Products?.Sum(p => p.Price * p.Quantity) ?? 0;
-
+        public decimal Ammount { get; set; }
         public Cart(int cartId, string payerDocument, DateTime? createdAt = null)
         {
             CartId = cartId;
             PayerDocument = payerDocument;
             CreatedAt = createdAt ?? DateTime.UtcNow;
+            Ammount = 0;
         }
     }
 }
