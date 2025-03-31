@@ -82,6 +82,9 @@ namespace Shopping.API.Services
                 throw new KeyNotFoundException($"Cart with ID {cartId} not found");
             }
 
+            if (cart.Products.Count() <= 0)
+                return 0;
+
             var total = cart.Products.Sum(p => p.Price * p.Quantity) * (1 - (cart.DiscountPercentage/100));
 
             await _cacheService.CacheCartTotalAsync(cartId, total);

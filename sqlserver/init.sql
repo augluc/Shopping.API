@@ -1,11 +1,9 @@
--- Criar Banco de Dados
 CREATE DATABASE RendimentoPay;
 GO
 
 USE RendimentoPay;
 GO
 
--- Criar tabela Cart
 CREATE TABLE Cart (
     CartId INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
     PayerDocument NVARCHAR(11) NOT NULL,
@@ -14,7 +12,6 @@ CREATE TABLE Cart (
 );
 GO
 
--- Criar tabela Product
 CREATE TABLE Product (
     ProductId INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
     CartId INT NOT NULL,
@@ -25,11 +22,10 @@ CREATE TABLE Product (
 );
 GO
 
--- Criar tabela Orders
 CREATE TABLE Orders (
     OrderId         INT IDENTITY(1,1) NOT NULL,
     CartId          INT NOT NULL,
-    PaymentStatus   NVARCHAR(20) NOT NULL DEFAULT 'Pending',
+    PaymentStatus   NVARCHAR(20) NOT NULL,
     PaymentId       UNIQUEIDENTIFIER NULL,
     CreatedAt       DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
     

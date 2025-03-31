@@ -8,17 +8,27 @@ services:
     environment:
       SA_PASSWORD: "S3nh@F0rt3!"
       ACCEPT_EULA: "Y"
-      MSSQL_PID: "Express"
     ports:
       - "1433:1433"
     volumes:
       - sqlserver_data:/var/opt/mssql
-      - ./sqlserver/init.sql:/docker-entrypoint-initdb.d/init.sql
-    healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S sqlserver_shopping -U sa -P S3nh@F0rt3! -Q \"SELECT 1\""]
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      - ./sqlserver/init.sql:/tmp/init.sql
+    networks:
+    - shop
+
+  mssqltools:
+    image: mcr.microsoft.com/mssql-tools
+    depends_on:
+      sqlserver:
+        condition: service_started
+    volumes:
+      - ./sqlserver/init.sql:/tmp/init.sql
+    command: >
+      /bin/bash -c "
+      /opt/mssql-tools/bin/sqlcmd -S sqlserver_shopping -U sa -P S3nh@F0rt3! -d master -i /tmp/init.sql"
+    networks:
+    - shop
+
 
   redis:
     image: redis:latest
@@ -29,6 +39,8 @@ services:
     volumes:
       - redis_data:/data
     command: ["redis-server", "--appendonly", "yes"]
+    networks:
+    - shop
 
   shopping.api:
     image: ${DOCKER_REGISTRY-}shoppingapi
@@ -37,15 +49,14 @@ services:
       dockerfile: Shopping.API/Dockerfile
     depends_on:
       sqlserver:
-        condition: service_healthy
+        condition: service_started
       redis:
         condition: service_started
-
-  shopping.api.tests:
-    image: ${DOCKER_REGISTRY-}shoppingapitests
-    build:
-      context: .
-      dockerfile: Shopping.API.Tests/Dockerfile
+    networks:
+    - shop
+networks:
+  shop:
+    driver: bridge
 
 volumes:
   sqlserver_data:
