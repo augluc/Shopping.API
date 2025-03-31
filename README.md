@@ -31,6 +31,18 @@ A microservices-based shopping cart API with payment integration, built with .NE
 - [.NET 8 SDK](https://dotnet.microsoft.com/download)
 - [Git](https://git-scm.com/)
 
+## 🐳 Quick Start
+
+```bash
+git clone https://github.com/your-username/shopping-api.git
+cd shopping-api
+docker-compose up -d
+```
+- Services will be available at:
+    . API: http://localhost:8080
+    . SQL Server: localhost:1433
+    . Redis: localhost:6379
+
 ## 🏗️ Project Structure
 
 ```
@@ -55,18 +67,6 @@ Shopping.API/
     Dockerfile           (Docker container setup)
     docker-compose.yml   (Service orchestration)
 ```
-
-## 🐳 Quick Start
-
-```bash
-git clone https://github.com/your-username/shopping-api.git
-cd shopping-api
-docker-compose up -d
-```
-- Services will be available at:
-    . API: http://localhost:8080
-    . SQL Server: localhost:1433
-    . Redis: localhost:6379
 
 ## 📊 Database Schema
 
