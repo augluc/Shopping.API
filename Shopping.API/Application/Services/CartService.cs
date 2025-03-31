@@ -118,7 +118,6 @@ namespace Shopping.API.Application.Services
 
             await _cacheService.InvalidateCartTotalCacheAsync(product.CartId);
             return await _cartRepository.UpdateProductAsync(product);
-
         }
 
         public async Task<bool> RemoveProductFromCartAsync(int productId)

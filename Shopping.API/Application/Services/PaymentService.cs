@@ -53,38 +53,25 @@ namespace Shopping.API.Application.Services
                 PayerDocument = cart.PayerDocument
             };
 
-            try
-            {
-                var response = await _httpClient.PostAsJsonAsync(
-                    "payments",
-                    new
-                    {
-                        cart_id = paymentRequest.CartId,
-                        amount = paymentRequest.Amount,
-                        payer_document = paymentRequest.PayerDocument
-                    });
+            var response = await _httpClient.PostAsJsonAsync(
+                "payments",
+                new
+                {
+                    cart_id = paymentRequest.CartId,
+                    amount = paymentRequest.Amount,
+                    payer_document = paymentRequest.PayerDocument
+                });
 
-                response.EnsureSuccessStatusCode();
+            response.EnsureSuccessStatusCode();
 
-                var paymentResponse = await response.Content.ReadFromJsonAsync<PaymentResponse>() ??
-                    throw new InvalidOperationException("Invalid payment response");
+            var paymentResponse = await response.Content.ReadFromJsonAsync<PaymentResponse>() ??
+                throw new InvalidOperationException("Invalid payment response");
 
-                return await _orderRepository.CreateAsync(
-                    cartId,
-                    paymentResponse.PaymentId,
-                    paymentResponse.Status,
-                    paymentResponse.CreatedAt);
-            }
-            catch (HttpRequestException ex)
-            {
-                _logger.LogError(ex, "Payment API error for cart {CartId}", cartId);
-                throw new ApplicationException("Payment service unavailable", ex);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Unexpected error processing payment for cart {CartId}", cartId);
-                throw;
-            }
+            return await _orderRepository.CreateAsync(
+                cartId,
+                paymentResponse.PaymentId,
+                paymentResponse.Status,
+                paymentResponse.CreatedAt);
         }
     }
 }

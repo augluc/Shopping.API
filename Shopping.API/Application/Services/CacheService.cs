@@ -37,13 +37,13 @@ namespace Shopping.API.Application.Services
             var cacheKey = GetCacheKey(cartId);
             using var activity = DiagnosticService.StartActivity("CacheCartTotal");
 
+            if (!await _cacheLock.WaitAsync(_defaultLockTimeout))
+            {
+                throw new CacheException("Cache operation timeout");
+            }
+
             try
             {
-                if (!await _cacheLock.WaitAsync(_defaultLockTimeout))
-                {
-                    throw new CacheException("Cache operation timeout");
-                }
-
                 var serializedValue = JsonSerializer.Serialize(total, _jsonOptions);
 
                 await _cache.SetStringAsync(
@@ -58,12 +58,6 @@ namespace Shopping.API.Application.Services
                 activity?.SetTag("cartId", cartId);
                 _logger.LogDebug("Successfully cached total for cart {CartId}", cartId);
             }
-            catch (Exception ex) when (ex is not CacheException)
-            {
-                _logger.LogError(ex, "Failed to cache total for cart {CartId}", cartId);
-                activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
-                throw new CacheException("Cache operation failed", ex);
-            }
             finally
             {
                 _cacheLock.Release();
@@ -75,32 +69,23 @@ namespace Shopping.API.Application.Services
             var cacheKey = GetCacheKey(cartId);
             using var activity = DiagnosticService.StartActivity("GetCachedCartTotal");
 
+            var cachedValue = await _cache.GetStringAsync(cacheKey);
+            if (string.IsNullOrEmpty(cachedValue))
+            {
+                activity?.SetTag("cache.hit", false);
+                return null;
+            }
+
             try
             {
-                var cachedValue = await _cache.GetStringAsync(cacheKey);
-                if (string.IsNullOrEmpty(cachedValue))
-                {
-                    activity?.SetTag("cache.hit", false);
-                    return null;
-                }
-
-                try
-                {
-                    var result = JsonSerializer.Deserialize<decimal>(cachedValue, _jsonOptions);
-                    activity?.SetTag("cache.hit", true);
-                    return result;
-                }
-                catch (JsonException ex)
-                {
-                    _logger.LogWarning(ex, "Invalid cache data for cart {CartId}", cartId);
-                    await SafeRemoveAsync(cacheKey);
-                    return null;
-                }
+                var result = JsonSerializer.Deserialize<decimal>(cachedValue, _jsonOptions);
+                activity?.SetTag("cache.hit", true);
+                return result;
             }
-            catch (Exception ex)
+            catch (JsonException ex)
             {
-                _logger.LogError(ex, "Error retrieving cached total for cart {CartId}", cartId);
-                activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+                _logger.LogWarning(ex, "Invalid cache data for cart {CartId}", cartId);
+                await SafeRemoveAsync(cacheKey);
                 return null;
             }
         }
@@ -110,34 +95,21 @@ namespace Shopping.API.Application.Services
             var cacheKey = GetCacheKey(cartId);
             using var activity = DiagnosticService.StartActivity("InvalidateCartCache");
 
-            try
-            {
-                await SafeRemoveAsync(cacheKey);
-                activity?.SetTag("cartId", cartId);
-            }
-            catch (Exception ex)
-            {
-                activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
-                throw new CacheException("Cache invalidation failed", ex);
-            }
+            await SafeRemoveAsync(cacheKey);
+            activity?.SetTag("cartId", cartId);
         }
 
         private async Task SafeRemoveAsync(string key)
         {
+            if (!await _cacheLock.WaitAsync(_defaultLockTimeout))
+            {
+                throw new CacheException("Cache operation timeout");
+            }
+
             try
             {
-                if (!await _cacheLock.WaitAsync(_defaultLockTimeout))
-                {
-                    throw new CacheException("Cache operation timeout");
-                }
-
                 await _cache.RemoveAsync(key);
                 _logger.LogDebug("Removed cache entry for key {CacheKey}", key);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error removing cache entry for key {CacheKey}", key);
-                throw;
             }
             finally
             {

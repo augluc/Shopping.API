@@ -6,12 +6,15 @@ using Shopping.API.Infrastructure.Repositories;
 using Shopping.API.Infrastructure.Repositories.Interfaces;
 using Shopping.API.Application.Services;
 using Shopping.API.Application.Services.Interfaces;
+using Shopping.API.Application.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
 ConfigureService(builder);
 
 var app = builder.Build();
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
