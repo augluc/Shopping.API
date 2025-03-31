@@ -33,26 +33,28 @@ A microservices-based shopping cart API with payment integration, built with .NE
 
 ## 🏗️ Project Structure
 
-- Shopping.API/
-  . Application/
-    . Controllers/          (API endpoints)
-    . Services/            (Business logic implementations)
-    . Services/Interfaces/ (Service contracts)
+```
+Shopping.API/
+  Application/
+    Controllers/          (API endpoints)
+    Services/            (Business logic implementations)
+    Services/Interfaces/ (Service contracts)
   
-  . Domain/
-    . Models/              (Core domain entities)
-    . Models/Request/      (Input DTOs)
-    . Models/Response/     (Output DTOs)
+  Domain/
+    Models/              (Core domain entities)
+    Models/Request/      (Input DTOs)
+    Models/Response/     (Output DTOs)
   
-  . Infrastructure/
-    . Data/                (Data context and configurations)
-    . Repositories/        (Data access implementations)
-    . Repositories/Interfaces/ (Repository contracts)
+  Infrastructure/
+    Data/                (Data context and configurations)
+    Repositories/        (Data access implementations)
+    Repositories/Interfaces/ (Repository contracts)
   
-  . Root files:
-    . Program.cs           (Main application configuration)
-    . Dockerfile           (Docker container setup)
-    . docker-compose.yml   (Service orchestration)
+  Root files:
+    Program.cs           (Main application configuration)
+    Dockerfile           (Docker container setup)
+    docker-compose.yml   (Service orchestration)
+```
 
 ## 🐳 Quick Start
 
