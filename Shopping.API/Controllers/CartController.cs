@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Shopping.API.Models;
-using Shopping.API.Models.Request;
-using Shopping.API.Services.Interfaces;
+using Shopping.API.Application.Services.Interfaces;
+using Shopping.API.Domain.Models;
+using Shopping.API.Domain.Models.Request;
 
 namespace Shopping.API.Controllers
 {

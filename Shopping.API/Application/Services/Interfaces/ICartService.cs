@@ -1,7 +1,7 @@
-﻿using Shopping.API.Models.Request;
-using Shopping.API.Models;
+﻿using Shopping.API.Domain.Models;
+using Shopping.API.Domain.Models.Request;
 
-namespace Shopping.API.Services.Interfaces
+namespace Shopping.API.Application.Services.Interfaces
 {
     public interface ICartService
     {

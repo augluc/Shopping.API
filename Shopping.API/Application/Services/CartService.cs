@@ -1,9 +1,9 @@
-﻿using Shopping.API.Models.Request;
-using Shopping.API.Models;
-using Shopping.API.Repositories.Interfaces;
-using Shopping.API.Services.Interfaces;
+﻿using Shopping.API.Infrastructure.Repositories.Interfaces;
+using Shopping.API.Domain.Models;
+using Shopping.API.Domain.Models.Request;
+using Shopping.API.Application.Services.Interfaces;
 
-namespace Shopping.API.Services
+namespace Shopping.API.Application.Services
 {
     public class CartService : ICartService
     {
@@ -29,7 +29,7 @@ namespace Shopping.API.Services
             var cart = await _cartRepository.GetByIdAsync(id);
 
             if (cart == null)
-                return null;    
+                return null;
 
             if (cart.Amount <= 0)
             {
@@ -85,7 +85,7 @@ namespace Shopping.API.Services
             if (cart.Products.Count() <= 0)
                 return 0;
 
-            var total = cart.Products.Sum(p => p.Price * p.Quantity) * (1 - (cart.DiscountPercentage/100));
+            var total = cart.Products.Sum(p => p.Price * p.Quantity) * (1 - cart.DiscountPercentage / 100);
 
             await _cacheService.CacheCartTotalAsync(cartId, total);
             _logger.LogInformation("Calculated and cached cart {CartId} total", cartId);
@@ -136,7 +136,7 @@ namespace Shopping.API.Services
 
         public async Task<bool> ApplyDiscountAsync(int cartId, decimal discountPercentage)
         {
-            if(discountPercentage < 0 || discountPercentage > 50)
+            if (discountPercentage < 0 || discountPercentage > 50)
                 throw new ArgumentException("Discount percentage must be between 0 and 50.");
             var cart = await _cartRepository.GetByIdAsync(cartId);
             if (cart == null) throw new ArgumentException($"Cart with ID {cartId} not found");

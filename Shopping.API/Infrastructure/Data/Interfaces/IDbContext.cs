@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace Shopping.API.Data.Interfaces
+namespace Shopping.API.Infrastructure.Data.Interfaces
 {
     public interface IDbContext
     {

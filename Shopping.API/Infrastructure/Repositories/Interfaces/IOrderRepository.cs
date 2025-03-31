@@ -1,6 +1,6 @@
-﻿using Shopping.API.Models;
+﻿using Shopping.API.Domain.Models;
 
-namespace Shopping.API.Repositories.Interfaces
+namespace Shopping.API.Infrastructure.Repositories.Interfaces
 {
     public interface IOrderRepository
     {

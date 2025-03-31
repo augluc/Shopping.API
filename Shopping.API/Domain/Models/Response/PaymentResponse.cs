@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Shopping.API.Models.Response
+namespace Shopping.API.Domain.Models.Response
 {
     public record PaymentResponse
     {

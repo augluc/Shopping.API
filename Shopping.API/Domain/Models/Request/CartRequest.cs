@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
-namespace Shopping.API.Models.Request
+namespace Shopping.API.Domain.Models.Request
 {
     public record CartRequest
     {

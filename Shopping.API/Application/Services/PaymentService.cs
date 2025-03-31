@@ -1,10 +1,10 @@
-﻿using Shopping.API.Models;
-using Shopping.API.Models.Request;
-using Shopping.API.Models.Response;
-using Shopping.API.Repositories.Interfaces;
-using Shopping.API.Services.Interfaces;
+﻿using Shopping.API.Application.Services.Interfaces;
+using Shopping.API.Domain.Models;
+using Shopping.API.Domain.Models.Request;
+using Shopping.API.Domain.Models.Response;
+using Shopping.API.Infrastructure.Repositories.Interfaces;
 
-namespace Shopping.API.Services
+namespace Shopping.API.Application.Services
 {
     public class PaymentService : IPaymentService
     {

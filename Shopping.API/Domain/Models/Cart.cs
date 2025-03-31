@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
-namespace Shopping.API.Models
+namespace Shopping.API.Domain.Models
 {
     public class Cart
     {

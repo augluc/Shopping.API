@@ -1,9 +1,9 @@
 ﻿using System.Data;
 using Microsoft.Data.SqlClient;
-using Shopping.API.Data.Interfaces;
+using Shopping.API.Infrastructure.Data.Interfaces;
 
 
-namespace Shopping.API.Data
+namespace Shopping.API.Infrastructure.Data
 {
     public class DbContext : IDbContext
     {

@@ -1,12 +1,9 @@
 ﻿using Dapper;
-using Microsoft.AspNetCore.Mvc;
-using Shopping.API.Data;
-using Shopping.API.Data.Interfaces;
-using Shopping.API.Models;
-using Shopping.API.Repositories.Interfaces;
-using System.Data;
+using Shopping.API.Domain.Models;
+using Shopping.API.Infrastructure.Data.Interfaces;
+using Shopping.API.Infrastructure.Repositories.Interfaces;
 
-namespace Shopping.API.Repositories
+namespace Shopping.API.Infrastructure.Repositories
 {
     public class OrderRepository : IOrderRepository
     {
@@ -22,7 +19,7 @@ namespace Shopping.API.Repositories
             using var connection = _dbContext.CreateConnection();
 
             return await connection.QueryFirstOrDefaultAsync<Order>(
-                "SELECT * FROM Orders WHERE CartId = @CartId", 
+                "SELECT * FROM Orders WHERE CartId = @CartId",
                 new { CartId = cartId });
         }
 

@@ -1,17 +1,11 @@
 ﻿// CartRepository.cs
 using Dapper;
-using Shopping.API.Data;
-using Shopping.API.Data.Interfaces;
-using Shopping.API.Models;
-using Shopping.API.Models.Request;
-using Shopping.API.Repositories.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
+using Shopping.API.Domain.Models;
+using Shopping.API.Domain.Models.Request;
+using Shopping.API.Infrastructure.Data.Interfaces;
+using Shopping.API.Infrastructure.Repositories.Interfaces;
 
-namespace Shopping.API.Repositories
+namespace Shopping.API.Infrastructure.Repositories
 {
     public class CartRepository : ICartRepository
     {
@@ -76,7 +70,7 @@ namespace Shopping.API.Repositories
             {
                 var affectedRows = await connection.ExecuteAsync(
                     "UPDATE Cart SET DiscountPercentage = @DiscountPercentage WHERE CartId = @CartId",
-                    new { DiscountPercentage = cart.DiscountPercentage, CartId = cart.CartId },
+                    new { cart.DiscountPercentage, cart.CartId },
                     transaction);
                 transaction.Commit();
 

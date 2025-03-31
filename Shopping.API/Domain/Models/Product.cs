@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Shopping.API.Models
+namespace Shopping.API.Domain.Models
 {
     public class Product
     {
@@ -20,20 +20,20 @@ namespace Shopping.API.Models
 
         public Product(int cartId, string productName, decimal price, int quantity)
         {
-            if (string.IsNullOrWhiteSpace(productName))
-                throw new ArgumentException("Product name cannot be empty or null.");
-
-            if (price <= 0)
-                throw new ArgumentException("Price must be greater than zero.");
-
-            if (quantity <= 0)
-                throw new ArgumentException("Quantity must be at least 1.");
-
             CartId = cartId;
             ProductName = productName;
             Price = price;
             Quantity = quantity;
+
+            Validate();
         }
+
         public Product() { }
+
+        private void Validate()
+        {
+            var validationContext = new ValidationContext(this);
+            Validator.ValidateObject(this, validationContext, validateAllProperties: true);
+        }
     }
 }

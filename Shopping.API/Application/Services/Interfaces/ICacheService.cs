@@ -1,4 +1,4 @@
-﻿namespace Shopping.API.Services.Interfaces
+﻿namespace Shopping.API.Application.Services.Interfaces
 {
     public interface ICacheService
     {

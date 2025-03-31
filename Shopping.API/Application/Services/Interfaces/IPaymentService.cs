@@ -1,6 +1,6 @@
-﻿using Shopping.API.Models;
+﻿using Shopping.API.Domain.Models;
 
-namespace Shopping.API.Services.Interfaces
+namespace Shopping.API.Application.Services.Interfaces
 {
     public interface IPaymentService
     {

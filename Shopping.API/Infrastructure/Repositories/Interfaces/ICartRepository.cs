@@ -1,8 +1,7 @@
-﻿using Shopping.API.Models;
-using Shopping.API.Models.Request;
-using System.Threading.Tasks;
+﻿using Shopping.API.Domain.Models;
+using Shopping.API.Domain.Models.Request;
 
-namespace Shopping.API.Repositories.Interfaces
+namespace Shopping.API.Infrastructure.Repositories.Interfaces
 {
     public interface ICartRepository
     {

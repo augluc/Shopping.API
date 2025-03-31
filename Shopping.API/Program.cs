@@ -1,11 +1,11 @@
 using Microsoft.Data.SqlClient;
 using System.Data;
-using Shopping.API.Data;
-using Shopping.API.Repositories;
-using Shopping.API.Repositories.Interfaces;
-using Shopping.API.Services;
-using Shopping.API.Services.Interfaces;
-using Shopping.API.Data.Interfaces;
+using Shopping.API.Infrastructure.Data;
+using Shopping.API.Infrastructure.Data.Interfaces;
+using Shopping.API.Infrastructure.Repositories;
+using Shopping.API.Infrastructure.Repositories.Interfaces;
+using Shopping.API.Application.Services;
+using Shopping.API.Application.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 

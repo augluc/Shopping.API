@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
-using Shopping.API.Services.Interfaces;
 using System.Text.Json;
 using System.Diagnostics;
+using Shopping.API.Application.Services.Interfaces;
 
-namespace Shopping.API.Services
+namespace Shopping.API.Application.Services
 {
     public class CacheService : ICacheService
     {
